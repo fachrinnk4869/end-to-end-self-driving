@@ -1,0 +1,11 @@
+transfuser/log/*
+late_fusion/log/*
+geometric_fusion/log/*
+aim/log/*
+cilrs/log/*
+x13/log/*
+s13/log/*
+data/*
+carla/*
+
+!data/README.md
