@@ -81,9 +81,9 @@ class PIDController(object):
         return out_control
 
 
-class x13(nn.Module):
+class x13_x13_traj(nn.Module):
     def __init__(self, config, device):
-        super(x13, self).__init__()
+        super(x13_x13_traj, self).__init__()
         self.config = config
         self.gpu_device = device
         # ------------------------------------------------------------------------------------------------
@@ -161,7 +161,6 @@ class x13(nn.Module):
 
     def forward(self, rgb_f, depth_f, next_route, velo_in):  # , gt_ss):
         # ------------------------------------------------------------------------------------------------
-        # print(next_route.shape)
         in_rgb = self.rgb_normalizer(rgb_f)  # [i]
         RGB_features0 = self.RGB_encoder.features[0](in_rgb)
         RGB_features1 = self.RGB_encoder.features[1](RGB_features0)
@@ -211,12 +210,8 @@ class x13(nn.Module):
             # print("masuk")
             # print(xy.shape)
             # print(next_route.shape)
-            # print( torch.reshape(
-            #     velo_in, (velo_in.shape[0], 1)).shape)
-            # print((velo_in.shape[0], 1).shape)
-            # print((velo_in.shape[0], 1))
             # print(torch.reshape(
-            #     velo_in, (velo_in.shape[0], 1)))
+            # velo_in, (velo_in.shape[0], 1)).shape)
             ins = torch.cat([xy, next_route, torch.reshape(
                 velo_in, (velo_in.shape[0], 1))], dim=1)
             # print("ins", ins.shape)
