@@ -8,37 +8,37 @@ class GlobalConfig:
     init_stop_counter = 15
 
     n_class = 23
-    batch_size = 8
+    batch_size = 4
     coverage_area = 64
 
     # MGN parameter
-    MGN = False
+    MGN = True
     loss_weights = [1, 1, 1, 1, 1, 1, 1]
     lw_alpha = 1.5
-    bottleneck = [335, 679]
+    bottleneck = [29, 704]
 
     # for Data
     seq_len = 1  # jumlah input seq
     pred_len = 3  # future waypoints predicted
 
     # 14_weathers_full_data OR clear_noon_full_data
-    # root_dir = '/media/fachri/banyak/endtoend/data/ADVERSARIAL/ClearNoon-fix'
-    root_dir = '/media/fachri/banyak/endtoend/data/ADVERSARIAL/COBA'
+    root_dir = '/media/fachri/banyak/endtoend/data/ADVERSARIAL/ClearNoon-fix'
+    # root_dir = '/media/fachri/banyak/endtoend/data/ADVERSARIAL/COBA'
     train_towns = [
-        # 'Town01', 'Town02', 'Town03', 'Town04',
-        # 'Town06', 'Town07',
+        'Town01', 'Town02', 'Town03', 'Town04',
+        'Town06', 'Town07',
         'Town10'
     ]
-    # val_towns = ['Town05']
-    val_towns = ['Town10']
+    val_towns = ['Town05']
+    # val_towns = ['Town10']
     train_data, val_data = [], []
     for town in train_towns:
-        # if not (town == 'Town07' or town == 'Town10'):
-        # train_data.append(os.path.join(root_dir, town+'_long'))
-        # train_data.append(os.path.join(root_dir, town+'_short'))
+        if not (town == 'Town07' or town == 'Town10'):
+            train_data.append(os.path.join(root_dir, town+'_long'))
+        train_data.append(os.path.join(root_dir, town+'_short'))
         train_data.append(os.path.join(root_dir, town+'_tiny'))
     for town in val_towns:
-        # val_data.append(os.path.join(root_dir, town+'_short'))
+        val_data.append(os.path.join(root_dir, town+'_short'))
         val_data.append(os.path.join(root_dir, town+'_tiny'))
 
     # buat prediksi expert, test

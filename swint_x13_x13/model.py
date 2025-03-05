@@ -255,7 +255,8 @@ class swint_x13_x13(nn.Module):
             # Concatenate feature maps
             local_features = RGB_features0[0]  # Stage 1 (1/4 resolution)
             global_features = RGB_features0[3]  # Stage 4 (1/32 resolution)
-
+            # print("local features", local_features.shape)
+            # print("global features", global_features.shape)
             # Resize global_features to match local_features
             global_features_resized = F.interpolate(
                 global_features, size=local_features.shape[2:], mode='bilinear', align_corners=False)
