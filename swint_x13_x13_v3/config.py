@@ -8,7 +8,7 @@ class GlobalConfig:
     init_stop_counter = 15
 
     n_class = 23
-    batch_size = 6
+    batch_size = 4
     coverage_area = 64
 
     # MGN parameter
