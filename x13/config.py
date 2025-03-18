@@ -22,7 +22,7 @@ class GlobalConfig:
     pred_len = 3  # future waypoints predicted
 
     # 14_weathers_full_data OR clear_noon_full_data
-    root_dir = '/media/fachri/banyak/endtoend/data/ADVERSARIAL/ClearNoon'
+    root_dir = '/media/fachri/banyak/endtoend/data/ADVERSARIAL/ClearNoon-fix'
     train_towns = ['Town01', 'Town02', 'Town03', 'Town04',
                    'Town06', 'Town07', 'Town10']
     val_towns = ['Town05']

@@ -203,10 +203,10 @@ class x13(nn.Module):
         # waypoint prediction
         # get hidden state dari gabungan kedua bottleneck
         # RGB_features_sum+SC_features8 cat([RGB_features_sum, SC_features8], dim=1)
-        print("RGB_features8", RGB_features8.shape)
-        print("SC_features8", SC_features8.shape)
+        # print("RGB_features8", RGB_features8.shape)
+        # print("SC_features8", SC_features8.shape)
         hx = self.necks_net(cat([RGB_features8, SC_features8], dim=1))
-        print(hx.shape)
+        # print(hx.shape)
         xy = torch.zeros(size=(hx.shape[0], 2)).float().to(self.gpu_device)
         # predict delta wp
         out_wp = list()
@@ -224,14 +224,14 @@ class x13(nn.Module):
                 velo_in, (velo_in.shape[0], 1))], dim=1)
             # print("ins", ins.shape)
             hx = self.gru(ins, hx)
-            print("hx", hx.shape)
+            # print("hx", hx.shape)
             d_xy = self.pred_dwp(hx+tls_bias)
-            print("d_xy", d_xy.shape)
+            # print("d_xy", d_xy.shape)
             xy = xy + d_xy
-            print("xy", xy.shape)
+            # print("xy", xy.shape)
             out_wp.append(xy)
         pred_wp = torch.stack(out_wp, dim=1)
-        print("pred_wp", pred_wp.shape)
+        # print("pred_wp", pred_wp.shape)
         # ------------------------------------------------------------------------------------------------
         # control decoder
         control_pred = self.controller(hx+tls_bias)
