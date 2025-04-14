@@ -7,5 +7,5 @@ x13/log/*
 s13/log/*
 data/*
 carla/*
-
+model_ckpt
 !data/README.md

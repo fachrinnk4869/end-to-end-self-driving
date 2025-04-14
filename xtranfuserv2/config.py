@@ -3,7 +3,7 @@ import os
 
 class GlobalConfig:
     gpu_id = '0'
-    model = 'x13'
+    model = 'xtransfuser'
     logdir = 'log/'+model  # +'_w1' for 1 weather only
     init_stop_counter = 15
 
@@ -15,7 +15,9 @@ class GlobalConfig:
     MGN = True
     loss_weights = [1, 1, 1, 1, 1, 1, 1]
     lw_alpha = 1.5
-    bottleneck = [335, 679]
+    # bottleneck = [335, 679]
+    bottleneck = [335, 627]
+    # bottleneck = [335, 927]
 
     # for Data
     seq_len = 1  # jumlah input seq
@@ -23,9 +25,14 @@ class GlobalConfig:
 
     # 14_weathers_full_data OR clear_noon_full_data
     root_dir = '/media/fachri/banyak/endtoend/data/ADVERSARIAL/ClearNoon-fix'
-    train_towns = ['Town01', 'Town02', 'Town03', 'Town04',
-                   'Town06', 'Town07', 'Town10']
+    # root_dir = '/media/fachri/banyak/endtoend/data/ADVERSARIAL/COBA'
+    train_towns = [
+        'Town01', 'Town02', 'Town03', 'Town04',
+        'Town06', 'Town07',
+        'Town10'
+    ]
     val_towns = ['Town05']
+    # val_towns = ['Town10']
     train_data, val_data = [], []
     for town in train_towns:
         if not (town == 'Town07' or town == 'Town10'):
@@ -66,7 +73,23 @@ class GlobalConfig:
     cw_pid = [lws[0]/(lws[0]+lws[1]), lws[0]/(lws[0]+lws[2]),
               lws[0]/(lws[0]+lws[3])]  # str, thrt, brk
     cw_mlp = [1-cw_pid[0], 1-cw_pid[1], 1-cw_pid[2]]  # str, thrt, brk
-
+    # Conv Encoder
+    vert_anchors = 8
+    horz_anchors = 8
+    anchors = vert_anchors * horz_anchors
+    ignore_sides = True  # don't consider side cameras
+    ignore_rear = True  # don't consider rear cameras
+    n_views = 1  # no. of camera views
+    # GPT Encoder
+    n_embd = 512
+    block_exp = 4
+    n_layer = 8
+    n_head = 4
+    n_scale = 4
+    embd_pdrop = 0.1
+    resid_pdrop = 0.1
+    attn_pdrop = 0.1
+    # Controller
     turn_KP = 1.25
     turn_KI = 0.75
     turn_KD = 0.3
@@ -101,7 +124,7 @@ class GlobalConfig:
     }
 
     n_fmap_b1 = [[32, 16], [24], [40], [80, 112], [192, 320, 1280]]
-    n_fmap_b3 = [[40, 24], [32], [48], [96, 136], [232, 384, 1536]]
+    n_fmap_b3 = [[40, 24], [32], [48], [96, 136], [64, 384, 1536], [512]]
 
     def __init__(self, **kwargs):
         for k, v in kwargs.items():

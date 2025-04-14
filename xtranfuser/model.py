@@ -530,12 +530,12 @@ class x13(nn.Module):
             [torch.arange(-self.w/2, self.w/2)]*self.h) / fx
         self.x_matrix = self.x_matrix.to(device)
         # SC
-        # self.SC_encoder = models.efficientnet_b1(pretrained=False)
-        # self.SC_encoder.features[0][0] = nn.Conv2d(
-        #     config.n_class, config.n_fmap_b1[0][0], kernel_size=3, stride=2, padding=1, bias=False)
-        # self.SC_encoder.classifier = nn.Sequential()
-        # self.SC_encoder.avgpool = nn.Sequential()
-        # self.SC_encoder.apply(kaiming_init)
+        self.SC_encoder = models.efficientnet_b1(pretrained=False)
+        self.SC_encoder.features[0][0] = nn.Conv2d(
+            config.n_class, config.n_fmap_b1[0][0], kernel_size=3, stride=2, padding=1, bias=False)
+        self.SC_encoder.classifier = nn.Sequential()
+        self.SC_encoder.avgpool = nn.Sequential()
+        self.SC_encoder.apply(kaiming_init)
         # ------------------------------------------------------------------------------------------------
         # feature fusion
         self.necks_net = nn.Sequential(  # inputnya dari 2 bottleneck
@@ -649,15 +649,15 @@ class x13(nn.Module):
         # ingat, depth juga sequence, ambil yang terakhir
         top_view_sc = self.gen_top_view_sc(depth_f, ss_f)
         # bagian downsampling
-        # SC_features0 = self.SC_encoder.features[0](top_view_sc)
-        # SC_features1 = self.SC_encoder.features[1](SC_features0)
-        # SC_features2 = self.SC_encoder.features[2](SC_features1)
-        # SC_features3 = self.SC_encoder.features[3](SC_features2)
-        # SC_features4 = self.SC_encoder.features[4](SC_features3)
-        # SC_features5 = self.SC_encoder.features[5](SC_features4)
-        # SC_features6 = self.SC_encoder.features[6](SC_features5)
-        # SC_features7 = self.SC_encoder.features[7](SC_features6)
-        # SC_features8 = self.SC_encoder.features[8](SC_features7)
+        SC_features0 = self.SC_encoder.features[0](top_view_sc)
+        SC_features1 = self.SC_encoder.features[1](SC_features0)
+        SC_features2 = self.SC_encoder.features[2](SC_features1)
+        SC_features3 = self.SC_encoder.features[3](SC_features2)
+        SC_features4 = self.SC_encoder.features[4](SC_features3)
+        SC_features5 = self.SC_encoder.features[5](SC_features4)
+        SC_features6 = self.SC_encoder.features[6](SC_features5)
+        SC_features7 = self.SC_encoder.features[7](SC_features6)
+        SC_features8 = self.SC_encoder.features[8](SC_features7)
 
         # buat encoder waypoint cognitive transfuser
         image_features = self.image_encoder.features.conv1(in_rgb)

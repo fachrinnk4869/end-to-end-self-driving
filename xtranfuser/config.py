@@ -16,14 +16,14 @@ class GlobalConfig:
     loss_weights = [1, 1, 1, 1, 1, 1, 1]
     lw_alpha = 1.5
     # bottleneck = [335, 679]
-    bottleneck = [335, 643]
+    bottleneck = [335, 927]
 
     # for Data
     seq_len = 1  # jumlah input seq
     pred_len = 3  # future waypoints predicted
 
     # 14_weathers_full_data OR clear_noon_full_data
-    root_dir = '/media/fachri/banyak/endtoend/data/ADVERSARIAL/ClearNoon-fix'
+    root_dir = '/media/fachri/HDD/endtoend/data/ADVERSARIAL/ClearNoon-fix'
     # root_dir = '/media/fachri/banyak/endtoend/data/ADVERSARIAL/COBA'
     train_towns = [
         'Town01', 'Town02', 'Town03', 'Town04',

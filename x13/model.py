@@ -195,6 +195,7 @@ class x13(nn.Module):
         SC_features8 = self.SC_encoder.features[8](SC_features7)
         # ------------------------------------------------------------------------------------------------
         # red light and stop sign detection
+        print("RGB_features8", RGB_features8.shape)
         redl_stops = self.tls_predictor(RGB_features8)
         red_light = redl_stops[:, 0]
         stop_sign = redl_stops[:, 1]

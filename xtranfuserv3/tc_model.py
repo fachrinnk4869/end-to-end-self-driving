@@ -2,14 +2,28 @@ import unittest
 import torch
 from model import x13
 from config import GlobalConfig as Config
+from transfuser.model import TransFuser
+import os
 
 
 class TestXR14(unittest.TestCase):
     def setUp(self):
         self.config = Config()
-        self.device = torch.device('cpu')
-        self.model = x13(self.config, self.device)
-        self.w = self.config.input_resolution
+        self.device = torch.device('cuda')
+        self.model = x13(self.config, self.device).float().to(self.device)
+        self.modelTransfuser = TransFuser(
+            self.config, self.device).float().to(self.device)
+        state_dict = torch.load(
+            os.path.join('transfuser/log', 'best_model.pth'))
+        # Print available layers (keys in state_dict)
+        # for key in state_dict.keys():
+        #     print(key)
+        # print(self.modelTransfuser)
+        # print(model)
+
+        self.modelTransfuser.load_state_dict(state_dict)
+        # self.w = self.config.input_resolution
+        self.w = 256
         self.h = self.w
 
     def test_init(self):
@@ -17,12 +31,27 @@ class TestXR14(unittest.TestCase):
         self.assertEqual(self.model.config, self.config)
         self.assertEqual(self.model.gpu_device, self.device)
 
-    def test_rgb_encoder(self):
-        # Assuming RGB_Encoder is a method of xr14
+    def test_run_transfuser(self):
+        # Assuming TransFuser is a method of xr14
         input_tensor = torch.randn(
-            self.config.batch_size, 3, self.h, self.w)  # Example input
-        output = self.model.RGB_encoder(input_tensor)
-        self.assertIsInstance(output, torch.Tensor)
+            self.config.batch_size, 3, self.h, self.w).to(self.device)
+        # image_list torch.Size([20, 3, 256, 256])
+        image_list = [torch.randn(
+            20, 3, self.h, self.w).to(self.device)]
+        # lidar_list torch.Size([20, 2, 256, 256])
+        lidar_list = [torch.randn(
+            20, 2, self.h, self.w).to(self.device)]
+        # target_point torch.Size([20, 2])
+        target_point = torch.randn(
+            20, 2).to(self.device)
+        # velocity torch.Size([20])
+        velocity = torch.randn(20).to(self.device)
+
+        pred_wp = self.modelTransfuser(
+            image_list, lidar_list, target_point, velocity)
+        print(pred_wp.shape)
+
+        self.assertIsInstance(pred_wp, torch.Tensor)
         # Add more assertions based on expected output shape and values
 
     def test_forward(self):
@@ -50,14 +79,6 @@ class TestXR14(unittest.TestCase):
         assert isinstance(throttle, torch.Tensor)
         # print(sdcs)
         assert len(sdcs) == self.config.seq_len
-
-    # def test_sc_encoder(self):
-    #     # Assuming SC_encoder is a method of xr14
-    #     input_tensor = torch.randn(
-    #         1, 23, self.h, self.w)  # Example input
-    #     output = self.model.SC_encoder(input_tensor)
-    #     self.assertIsInstance(output, torch.Tensor)
-        # Add more assertions based on expected output shape and values
 
 
 if __name__ == '__main__':
