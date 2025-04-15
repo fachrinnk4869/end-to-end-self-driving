@@ -91,25 +91,9 @@ def train(data_loader, model, config, writer, cur_epoch, device, optimizer, para
         gt_stop_sign = data['stop_sign'].to(device, dtype=torch.float)
 
         # forward pass
-        pred_seg, pred_wp, steer, throttle, brake, red_light, stop_sign, sdcs = model(
+        pred_seg, pred_wp, steer, throttle, brake, red_light, stop_sign, _ = model(
             fronts, depth_fronts, target_point, gt_velocity)  # , seg_fronts[-1])
-        # assert pred_wp.shape == (
-        #     config.batch_size, config.pred_len, 2), f"Shape mismatch: got {pred_wp.shape}, expected({(
-        #         config.batch_size, config.pred_len, 2)},)"
-        # assert steer.shape == (
-        #     config.batch_size, ), f"Shape mismatch: got {steer.shape}, expected ({config.batch_size},)"
-        # assert throttle.shape == (config.batch_size,), print(throttle.shape)
-        # assert brake.shape == (config.batch_size,), print(brake.shape)
-        # assert red_light.shape == (config.batch_size,), print(red_light.shape)
-        # assert stop_sign.shape == (config.batch_size,), print(stop_sign.shape)
-        # # is contigous
-        # for seg in pred_seg:
-        #     assert seg.is_contiguous()
-        # assert pred_wp.shape == (
-        #     config.batch_size, config.pred_len, 2)
-        # assert isinstance(steer, torch.Tensor)
-        # assert isinstance(throttle, torch.Tensor)
-        # print(sdcs)
+
         # compute loss
         loss_seg = BCEDice(pred_seg, seg_fronts)
         loss_wp = F.l1_loss(pred_wp, gt_waypoints)

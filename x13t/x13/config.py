@@ -12,7 +12,7 @@ class GlobalConfig:
     coverage_area = 64
 
     # MGN parameter
-    MGN = False
+    MGN = True
     loss_weights = [1, 1, 1, 1, 1, 1, 1]
     lw_alpha = 1.5
     bottleneck = [335, 679]
@@ -23,14 +23,9 @@ class GlobalConfig:
 
     # 14_weathers_full_data OR clear_noon_full_data
     root_dir = '/media/fachri/banyak/endtoend/data/ADVERSARIAL/ClearNoon-fix'
-    # root_dir = '/media/fachri/banyak/endtoend/data/ADVERSARIAL/COBA'
-    train_towns = [
-        'Town01', 'Town02', 'Town03', 'Town04',
-        'Town06', 'Town07',
-        'Town10'
-    ]
+    train_towns = ['Town01', 'Town02', 'Town03', 'Town04',
+                   'Town06', 'Town07', 'Town10']
     val_towns = ['Town05']
-    # val_towns = ['Town10']
     train_data, val_data = [], []
     for town in train_towns:
         if not (town == 'Town07' or town == 'Town10'):
@@ -106,7 +101,7 @@ class GlobalConfig:
     }
 
     n_fmap_b1 = [[32, 16], [24], [40], [80, 112], [192, 320, 1280]]
-    n_fmap_b3 = [[40, 24], [32], [48], [96, 136], [232, 384, 1536], [180]]
+    n_fmap_b3 = [[40, 24], [32], [48], [96, 136], [232, 384, 1536]]
 
     def __init__(self, **kwargs):
         for k, v in kwargs.items():

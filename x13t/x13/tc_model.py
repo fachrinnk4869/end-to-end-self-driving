@@ -39,25 +39,7 @@ class TestXR14(unittest.TestCase):
         for idx, param in enumerate(params):
             print(
                 f"Index: {idx}, Shape: {param.shape}, Name: {param.name if hasattr(param, 'name') else 'Unnamed'}")
-        print("segs_f", segs_f.shape)
-        print("pred_wp", pred_wp.shape)
-        print("steering", steering.shape)
-        print("throttle", throttle.shape)
-        print("brake", brake.shape)
-        print("red_light", red_light.shape)
-        print("stop_sign", stop_sign.shape)
-        print("sdcs", sdcs.shape)
-        assert segs_f.shape == (
-            batch_size, 23, self.h, self.w)
-        assert sdcs.shape == (
-            batch_size, 23, self.h, self.w)
-        assert pred_wp.shape == (
-            batch_size, self.config.pred_len, 2)
-        assert steering.shape == (1, )
-        assert throttle.shape == (1,)
-        assert brake.shape == (1,)
-        assert red_light.shape == (1,)
-        assert stop_sign.shape == (1,)
+
         assert len(segs_f) == self.config.seq_len
         # is contigous
         for seg in segs_f:

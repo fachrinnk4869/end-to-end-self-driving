@@ -12,7 +12,7 @@ class GlobalConfig:
     coverage_area = 64
 
     # MGN parameter
-    MGN = True
+    MGN = False
     loss_weights = [1, 1, 1, 1, 1, 1, 1]
     lw_alpha = 1.5
     # bottleneck = [335, 681]

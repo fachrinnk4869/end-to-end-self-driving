@@ -6,9 +6,6 @@ import torch.nn.functional as F
 import torchvision.models as models
 import torchvision.transforms as transforms
 import cv2
-from x13 import model
-from x13 import config as cfg
-import os
 
 
 def kaiming_init_layer(layer):
@@ -147,7 +144,7 @@ class x13(nn.Module):
         # ------------------------------------------------------------------------------------------------
         # wp predictor, input size 5 karena concat dari xy, next route xy, dan velocity
         self.gru = nn.GRUCell(input_size=5, hidden_size=config.n_fmap_b3[4][0])
-        self.pred_dwp = nn.Linear(config.n_fmap_b3[5][0], 2)
+        self.pred_dwp = nn.Linear(config.n_fmap_b3[4][0], 2)
         # PID Controller
         self.turn_controller = PIDController(
             K_P=config.turn_KP, K_I=config.turn_KI, K_D=config.turn_KD, n=config.turn_n)
@@ -157,136 +154,92 @@ class x13(nn.Module):
         # controller
         # MLP Controller
         self.controller = nn.Sequential(
-            nn.Linear(config.n_fmap_b3[5][0], config.n_fmap_b3[3][-1]),
+            nn.Linear(config.n_fmap_b3[4][0], config.n_fmap_b3[3][-1]),
             nn.Linear(config.n_fmap_b3[3][-1], 3),
             nn.ReLU()
         )
-        hidden_dim = config.n_fmap_b3[5][0]
-        nhead = 4
-        num_layers = 2
-        # Transformer encoder
-        encoder_layer = nn.TransformerEncoderLayer(
-            d_model=hidden_dim, nhead=nhead, batch_first=True)
-        self.transformer = nn.TransformerEncoder(
-            encoder_layer, num_layers=num_layers)
-        # input projection
-        self.input_proj = nn.Linear(3, hidden_dim)
-        self.hx_proj = nn.Linear(config.n_fmap_b3[4][0], hidden_dim)
-        self.modelOld = model.x13(
-            cfg.GlobalConfig, self.gpu_device).float().to(self.gpu_device)
-        state_dict = torch.load(
-            os.path.join('x13/log/x13', 'best_model.pth'))
-        # Print available layers (keys in state_dict)
-        # for key in state_dict.keys():
-        #     print(key)
-        # print(self.modelTransfuser)
-        # print(self.modelOld)
-
-        self.modelOld.load_state_dict(state_dict)
 
     def forward(self, rgb_f, depth_f, next_route, velo_in):  # , gt_ss):
         # ------------------------------------------------------------------------------------------------
         # print(next_route.shape)
         in_rgb = self.rgb_normalizer(rgb_f)  # [i]
-        RGB_features0 = self.modelOld.RGB_encoder.features[0](in_rgb)
-        RGB_features1 = self.modelOld.RGB_encoder.features[1](RGB_features0)
-        RGB_features2 = self.modelOld.RGB_encoder.features[2](RGB_features1)
-        RGB_features3 = self.modelOld.RGB_encoder.features[3](RGB_features2)
-        RGB_features4 = self.modelOld.RGB_encoder.features[4](RGB_features3)
-        RGB_features5 = self.modelOld.RGB_encoder.features[5](RGB_features4)
-        RGB_features6 = self.modelOld.RGB_encoder.features[6](RGB_features5)
-        RGB_features7 = self.modelOld.RGB_encoder.features[7](RGB_features6)
-        RGB_features8 = self.modelOld.RGB_encoder.features[8](RGB_features7)
+        RGB_features0 = self.RGB_encoder.features[0](in_rgb)
+        RGB_features1 = self.RGB_encoder.features[1](RGB_features0)
+        RGB_features2 = self.RGB_encoder.features[2](RGB_features1)
+        RGB_features3 = self.RGB_encoder.features[3](RGB_features2)
+        RGB_features4 = self.RGB_encoder.features[4](RGB_features3)
+        RGB_features5 = self.RGB_encoder.features[5](RGB_features4)
+        RGB_features6 = self.RGB_encoder.features[6](RGB_features5)
+        RGB_features7 = self.RGB_encoder.features[7](RGB_features6)
+        RGB_features8 = self.RGB_encoder.features[8](RGB_features7)
         # bagian upsampling
-        ss_f_3 = self.modelOld.conv3_ss_f(
-            cat([self.modelOld.up(RGB_features8), RGB_features5], dim=1))
-        ss_f_2 = self.modelOld.conv2_ss_f(
-            cat([self.modelOld.up(ss_f_3), RGB_features3], dim=1))
-        ss_f_1 = self.modelOld.conv1_ss_f(
-            cat([self.modelOld.up(ss_f_2), RGB_features2], dim=1))
-        ss_f_0 = self.modelOld.conv0_ss_f(
-            cat([self.modelOld.up(ss_f_1), RGB_features1], dim=1))
-        ss_f = self.modelOld.final_ss_f(self.modelOld.up(ss_f_0))
+        ss_f_3 = self.conv3_ss_f(
+            cat([self.up(RGB_features8), RGB_features5], dim=1))
+        ss_f_2 = self.conv2_ss_f(cat([self.up(ss_f_3), RGB_features3], dim=1))
+        ss_f_1 = self.conv1_ss_f(cat([self.up(ss_f_2), RGB_features2], dim=1))
+        ss_f_0 = self.conv0_ss_f(cat([self.up(ss_f_1), RGB_features1], dim=1))
+        ss_f = self.final_ss_f(self.up(ss_f_0))
         # ------------------------------------------------------------------------------------------------
         # buat semantic cloud
         # ingat, depth juga sequence, ambil yang terakhir
         top_view_sc = self.gen_top_view_sc(depth_f, ss_f)
         # bagian downsampling
-        SC_features0 = self.modelOld.SC_encoder.features[0](top_view_sc)
-        SC_features1 = self.modelOld.SC_encoder.features[1](SC_features0)
-        SC_features2 = self.modelOld.SC_encoder.features[2](SC_features1)
-        SC_features3 = self.modelOld.SC_encoder.features[3](SC_features2)
-        SC_features4 = self.modelOld.SC_encoder.features[4](SC_features3)
-        SC_features5 = self.modelOld.SC_encoder.features[5](SC_features4)
-        SC_features6 = self.modelOld.SC_encoder.features[6](SC_features5)
-        SC_features7 = self.modelOld.SC_encoder.features[7](SC_features6)
-        SC_features8 = self.modelOld.SC_encoder.features[8](SC_features7)
+        SC_features0 = self.SC_encoder.features[0](top_view_sc)
+        SC_features1 = self.SC_encoder.features[1](SC_features0)
+        SC_features2 = self.SC_encoder.features[2](SC_features1)
+        SC_features3 = self.SC_encoder.features[3](SC_features2)
+        SC_features4 = self.SC_encoder.features[4](SC_features3)
+        SC_features5 = self.SC_encoder.features[5](SC_features4)
+        SC_features6 = self.SC_encoder.features[6](SC_features5)
+        SC_features7 = self.SC_encoder.features[7](SC_features6)
+        SC_features8 = self.SC_encoder.features[8](SC_features7)
         # ------------------------------------------------------------------------------------------------
         # red light and stop sign detection
-        # print("RGB_features8", RGB_features8.shape)
-        redl_stops = self.modelOld.tls_predictor(RGB_features8)
+        print("RGB_features8", RGB_features8.shape)
+        redl_stops = self.tls_predictor(RGB_features8)
         red_light = redl_stops[:, 0]
         stop_sign = redl_stops[:, 1]
-        tls_bias = self.modelOld.tls_biasing(redl_stops)
+        tls_bias = self.tls_biasing(redl_stops)
         # ------------------------------------------------------------------------------------------------
         # waypoint prediction
         # get hidden state dari gabungan kedua bottleneck
         # RGB_features_sum+SC_features8 cat([RGB_features_sum, SC_features8], dim=1)
         # print("RGB_features8", RGB_features8.shape)
         # print("SC_features8", SC_features8.shape)
-        hx = self.modelOld.necks_net(cat([RGB_features8, SC_features8], dim=1))
-        # print("hx", hx.shape)
-        # xy = torch.zeros(size=(hx.shape[0], 2)).float().to(self.gpu_device)
-        # Create sequence input
-        ins_tokens = []
-        velo = torch.reshape(
-            velo_in, (velo_in.shape[0], 1))  # [B, 1]
-
+        hx = self.necks_net(cat([RGB_features8, SC_features8], dim=1))
+        # print(hx.shape)
+        xy = torch.zeros(size=(hx.shape[0], 2)).float().to(self.gpu_device)
+        # predict delta wp
+        out_wp = list()
         for _ in range(self.config.pred_len):
-            ins = torch.cat([next_route, velo], dim=1)  # [B, 5]
-            ins_tokens.append(ins)
-        ins_seq = torch.stack(ins_tokens, dim=1)  # [B, seq_len, 5]
-        # print("ins_seq", ins_seq.shape)
-        x_proj = self.input_proj(ins_seq)        # [B, seq_len, hidden_dim]
-        hx_proj = self.hx_proj(hx).unsqueeze(1)   # [B, 1, hidden_dim]
-        # print("ins", x_proj.shape)
-        # print("hx", hx_proj.shape)
-        transformer_input = torch.cat(
-            [x_proj, hx_proj], dim=1)  # [B, 1 + seq_len, hidden_dim]
-        # Run through transformer
-        out_seq = self.transformer(
-            transformer_input)  # [B, seq_len + 1, hidden_dim]
-        out_seq = out_seq[:, 1:, :]  # [B, seq_len, hidden_dim]
-        # Remove hx token
-        # Predict delta waypoint
-        tls_bias = self.hx_proj(tls_bias)
-        # print("out_seq", out_seq.shape)
-        # print("tls_bias", tls_bias.shape)
-        delta_xy = self.pred_dwp(
-            out_seq + tls_bias.unsqueeze(1))  # [B, seq_len, 2]
-        # print("delta_xy", delta_xy.shape)
-        # Reconstruct absolute waypoints
-        xy = torch.zeros((hx.shape[0], 2), dtype=torch.float32).to(
-            self.gpu_device)
-        out_wp = []
-        for t in range(self.config.pred_len):
-            xy = xy + delta_xy[:, t, :]
+            # print("masuk")
+            # print(xy.shape)
+            # print(next_route.shape)
+            # print( torch.reshape(
+            #     velo_in, (velo_in.shape[0], 1)).shape)
+            # print((velo_in.shape[0], 1).shape)
+            # print((velo_in.shape[0], 1))
+            # print(torch.reshape(
+            #     velo_in, (velo_in.shape[0], 1)))
+            ins = torch.cat([xy, next_route, torch.reshape(
+                velo_in, (velo_in.shape[0], 1))], dim=1)
+            # print("ins", ins.shape)
+            hx = self.gru(ins, hx)
+            # print("hx", hx.shape)
+            d_xy = self.pred_dwp(hx+tls_bias)
+            # print("d_xy", d_xy.shape)
+            xy = xy + d_xy
+            # print("xy", xy.shape)
             out_wp.append(xy)
-
         pred_wp = torch.stack(out_wp, dim=1)
         # print("pred_wp", pred_wp.shape)
-        # print("hx_proj", hx_proj.shape)
-        # print("tls_bias", tls_bias.shape)
         # ------------------------------------------------------------------------------------------------
         # control decoder
-        control_pred = self.controller(
-            hx_proj+tls_bias.unsqueeze(1)).squeeze(1)
-        # print("control pred", control_pred.shape)
+        control_pred = self.controller(hx+tls_bias)
         steer = control_pred[:, 0] * 2 - 1.  # convert from [0,1] to [-1,1]
-        # print("steer", steer.shape)
         throttle = control_pred[:, 1] * self.config.max_throttle
         brake = control_pred[:, 2]  # brake: hard 1.0 or no 0.0
-        # print("steer", steer.shape)
+
         return ss_f, pred_wp, steer, throttle, brake, red_light, stop_sign, top_view_sc
 
     def swap_RGB2BGR(self, matrix):
