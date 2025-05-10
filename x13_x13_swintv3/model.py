@@ -159,6 +159,12 @@ class x13(nn.Module):
         self.SC_encoder.patch_embed.projection = new_conv
 
         self.SC_encoder.apply(kaiming_init)
+        # print(self.SC_encoder)
+        # # Hitung jumlah parameter
+        # total_params = sum(p.numel() for p in self.SC_encoder.parameters())
+        # print(f"Total parameters: {total_params}")
+        # for param in self.SC_encoder.parameters():
+        #     print(param.dtype)
         # ------------------------------------------------------------------------------------------------
         # feature fusion
         self.necks_net = nn.Sequential(  # inputnya dari 2 bottleneck
@@ -220,11 +226,12 @@ class x13(nn.Module):
             # Concatenate feature maps
             # local_features = RGB_features0[0]  # Stage 1 (1/4 resolution)
             # local_features1 = RGB_features0[1]  # Stage 2 (1/8 resolution)
+
             local_features1 = SC_features0[0]  # Stage 2 (1/8 resolution)
             # local_features2 = RGB_features0[2]  # Stage 3 (1/16 resolution)
             local_features2 = SC_features0[3]  # Stage 4 (1/32 resolution)
-            # print("local features", local_features.shape)
-            # print("global features", global_features.shape)
+            print("local_features1", local_features1.shape)
+            print("local_features2", local_features2.shape)
             # Resize global_features to match local_features
             # local_features_resized = F.interpolate(
             #     local_features, size=global_features.shape[2:], mode='bilinear', align_corners=False)
@@ -329,7 +336,7 @@ class x13(nn.Module):
         top_view_sc[coor_clsn[0], coor_clsn[1], coor_clsn[2],
                     coor_clsn[3]] = 1.0  # format axis dari NCHW
 
-        self.show_seg_sdc(semseg, top_view_sc)
+        # self.show_seg_sdc(semseg, top_view_sc)
         return top_view_sc
 
     def show_seg_sdc(self, seg, sdc):

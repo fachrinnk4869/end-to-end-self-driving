@@ -1,0 +1,21 @@
+services:
+  x13_swinv2:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: x13_swinv3-container
+    shm_size: '8gb'  # Set shared memory size
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all  # Use all available GPUs
+      - NVIDIA_DRIVER_CAPABILITIES=compute,video,utility
+      - DISPLAY=${DISPLAY}
+      - QT_X11_NO_MITSHM=1
+      - QT_XCB_GL_INTEGRATION=xcb_egl
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix  # For X11 forwarding
+      - /media/fachri/banyak:/media/fachri/banyak
+      - .:/app  # Mount the current directory into the container
+    network_mode: host  # Use host network
+    tty: true
+    runtime: nvidia
+    privileged: true  # Give the container full access to host devices

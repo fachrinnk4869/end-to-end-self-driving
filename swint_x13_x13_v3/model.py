@@ -150,6 +150,7 @@ class swint_x13_x13(nn.Module):
         self.RGB_encoder.classifier = nn.Sequential()
         # cara paling gampang untuk menghilangkan fc layer yang tidak diperlukan
         self.RGB_encoder.avgpool = nn.Sequential()
+        print(self.RGB_encoder)
         # SS
         # self.up = nn.Upsample(
         #     scale_factor=2, mode='bilinear', align_corners=True)

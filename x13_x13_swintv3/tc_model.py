@@ -34,11 +34,11 @@ class TestXR14(unittest.TestCase):
 
         segs_f, pred_wp, steering, throttle, brake, red_light, stop_sign, sdcs = self.model(
             rgbs, depth, target_point, velo_in)
-        params = list(
-            filter(lambda p: p.requires_grad, self.model.parameters()))
-        for idx, param in enumerate(params):
-            print(
-                f"Index: {idx}, Shape: {param.shape}, Name: {param.name if hasattr(param, 'name') else 'Unnamed'}")
+        # params = list(
+        #     filter(lambda p: p.requires_grad, self.model.parameters()))
+        # for idx, param in enumerate(params):
+        #     print(
+        #         f"Index: {idx}, Shape: {param.shape}, Name: {param.name if hasattr(param, 'name') else 'Unnamed'}")
 
         assert len(segs_f) == self.config.seq_len
         # is contigous

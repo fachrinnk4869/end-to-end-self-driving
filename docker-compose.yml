@@ -1,45 +1,22 @@
 services:
-  carla:
-    image: carlasim/carla:0.9.10.1
-    container_name: carla
-    privileged: true
-    runtime: nvidia 
+  swinv2:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: all-container
+    shm_size: '8gb'  # Set shared memory size
     environment:
-      - DISPLAY=${DISPLAY}   # Pass host DISPLAY variable
-    network_mode: "host"      # Use host network
+      - NVIDIA_VISIBLE_DEVICES=all  # Use all available GPUs
+      - NVIDIA_DRIVER_CAPABILITIES=compute,video,utility
+      - DISPLAY=${DISPLAY}
+      - QT_X11_NO_MITSHM=1
+      - QT_XCB_GL_INTEGRATION=xcb_egl
     volumes:
-      - /tmp/.X11-unix:/tmp/.X11-unix:rw  # X11 socket for GUI forwarding
-    command: /bin/bash ./CarlaUE4.sh -opengl --world-port=2000
-  carla2:
-    image: carlasim/carla:0.9.10.1
-    container_name: carla2
-    privileged: true
-    runtime: nvidia 
-    environment:
-      - DISPLAY=${DISPLAY}   # Pass host DISPLAY variable
-    network_mode: "host"      # Use host network
-    volumes:
-      - /tmp/.X11-unix:/tmp/.X11-unix:rw  # X11 socket for GUI forwarding
-    command: /bin/bash ./CarlaUE4.sh -opengl --world-port=2002
-  carla3:
-    image: carlasim/carla:0.9.10.1
-    container_name: carla3
-    privileged: true
-    runtime: nvidia 
-    environment:
-      - DISPLAY=${DISPLAY}   # Pass host DISPLAY variable
-    network_mode: "host"      # Use host network
-    volumes:
-      - /tmp/.X11-unix:/tmp/.X11-unix:rw  # X11 socket for GUI forwarding
-    command: /bin/bash ./CarlaUE4.sh -opengl --world-port=2004
-  carla4:
-    image: carlasim/carla:0.9.10.1
-    container_name: carla4
-    privileged: true
-    runtime: nvidia 
-    environment:
-      - DISPLAY=${DISPLAY}   # Pass host DISPLAY variable
-    network_mode: "host"      # Use host network
-    volumes:
-      - /tmp/.X11-unix:/tmp/.X11-unix:rw  # X11 socket for GUI forwarding
-    command: /bin/bash ./CarlaUE4.sh -opengl --world-port=2006
+      - /tmp/.X11-unix:/tmp/.X11-unix  # For X11 forwarding
+      - /media/fachri/banyak:/media/fachri/banyak
+      - .:/app  # Mount the current directory into the container
+      - /home/fachri/CARLA:/root/CARLA
+    network_mode: host  # Use host network
+    tty: true
+    runtime: nvidia
+    privileged: true  # Give the container full access to host devices

@@ -132,7 +132,12 @@ class x13(nn.Module):
             config.n_class, config.n_fmap_b1[0][0], kernel_size=3, stride=2, padding=1, bias=False)
         self.SC_encoder.classifier = nn.Sequential()
         self.SC_encoder.avgpool = nn.Sequential()
-
+        # print(self.SC_encoder)
+        # Hitung jumlah parameter
+        # total_params = sum(p.numel() for p in self.SC_encoder.parameters())
+        # print(f"Total parameters: {total_params}")
+        # for param in self.SC_encoder.parameters():
+        #     print(param.dtype)
         # self.SC_encoder2 = models.swin_t(weights=False)
         # # print(self.SC_encoder)
         # self.SC_encoder2.features[0][0] = nn.Conv2d(
@@ -207,6 +212,7 @@ class x13(nn.Module):
         SC_features7 = self.SC_encoder.norm(SC_features7)
         # print("SC_features7", SC_features7.shape)
         SC_features7 = SC_features7.permute(0, 3, 1, 2)
+        # print("SC_features7", SC_features7.shape)
         SC_features8 = self.downsample(SC_features7)
         # SC_features8 = self.SC_encoder.features[8](SC_features7)
         # ------------------------------------------------------------------------------------------------
@@ -218,8 +224,9 @@ class x13(nn.Module):
         # ------------------------------------------------------------------------------------------------
         # waypoint prediction
         # get hidden state dari gabungan kedua bottleneck
-        # print("RGB_features8", RGB_features8.shape)
-        # print("SC_features8", SC_features8.shape)
+        print("SC_features7", SC_features7.shape)
+        print("RGB_features8", RGB_features8.shape)
+        print("SC_features8", SC_features8.shape)
         # RGB_features_sum+SC_features8 cat([RGB_features_sum, SC_features8], dim=1)
         hx = self.necks_net(cat([RGB_features8, SC_features8], dim=1))
         # print(hx.shape)

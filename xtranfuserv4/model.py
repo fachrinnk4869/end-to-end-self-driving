@@ -1,5 +1,5 @@
 import os
-from cognitive_transfuser.model import TransFuser
+from .cognitive_transfuser.model import TransFuser
 from collections import deque
 import sys
 import numpy as np
