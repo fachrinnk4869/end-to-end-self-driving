@@ -312,7 +312,7 @@ class x13(nn.Module):
         top_view_sc[coor_clsn[0], coor_clsn[1], coor_clsn[2],
                     coor_clsn[3]] = 1.0  # format axis dari NCHW
 
-        # self.show_seg_sdc(semseg, top_view_sc)
+        self.show_seg_sdc(semseg, top_view_sc)
         return top_view_sc
 
     def show_seg_sdc(self, seg, sdc):

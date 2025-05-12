@@ -1,6 +1,6 @@
 from config import GlobalConfig
 from data import CARLA_Data
-from model import segmenter_x13_x13
+from model import swint_x13_x13
 import pandas as pd
 import os
 from tqdm import tqdm
@@ -182,7 +182,7 @@ os.environ["CUDA_VISIBLE_DEVICES"] = config.gpu_id
 
 # IMPORT MODEL
 print("IMPORT ARSITEKTUR DL DAN COMPILE")
-model = segmenter_x13_x13(config, device).float().to(device)
+model = swint_x13_x13(config, device).float().to(device)
 model.load_state_dict(torch.load(
     os.path.join(config.logdir, 'best_model.pth')))
 

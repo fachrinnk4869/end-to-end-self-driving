@@ -359,17 +359,6 @@ def main():
     model = x13(config, device).to(device)
     model_parameters = filter(lambda p: p.requires_grad, model.parameters())
     params = sum([np.prod(p.size()) for p in model_parameters])
-    # Cek dtype OUTPUT layer saat DI DALAM autocast
-
-    # def print_dtype_hook(module, input, output):
-    #     print(
-    #         f"[INSIDE autocast] {module.__class__.__name__} output dtype: {output.dtype}")
-
-    # for layer in model.modules():
-    #     # Skip model itu sendiri (root) jika mau
-    #     if layer != x13:
-    #         layer.register_forward_hook(print_dtype_hook)
-
     print('Total trainable parameters: ', params)
 
     # OPTIMIZER

@@ -3,7 +3,7 @@ import os
 
 class GlobalConfig:
     gpu_id = '0'
-    model = 'swint_x13_x13'
+    model = 'swint_x13_x13_v4'
     logdir = 'log/'+model  # +'_w1' for 1 weather only
     init_stop_counter = 15
 
@@ -46,7 +46,7 @@ class GlobalConfig:
     test_weather = 'ClearNoon-fix'  # ClearNoon, ClearSunset, CloudyNoon, CloudySunset, WetNoon, WetSunset, MidRainyNoon, MidRainSunset, WetCloudyNoon, WetCloudySunset, HardRainNoon, HardRainSunset, SoftRainNoon, SoftRainSunset, Run1_ClearNoon, Run2_ClearNoon, Run3_ClearNoon
     test_scenario = 'ADVERSARIAL'  # NORMAL ADVERSARIAL
     expert_dir = '/media/fachri/banyak/endtoend/data/' + \
-        test_scenario+'/'+test_weather+'/Expert/'  # 8T1W 8T14W
+        test_scenario+'/'+test_weather  # 8T1W 8T14W
     for town in val_towns:
         # Expert OR Expert_w1 for 1 weather only scenario
         test_data.append(os.path.join(expert_dir, town+'_long'))
