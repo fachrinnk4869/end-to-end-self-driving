@@ -477,12 +477,12 @@ class TransFuser(nn.Module):
             target_point (tensor): goal location registered to ego-frame
             velocity (tensor): input velocity from speedometer
         '''
-        print('image_len', len(image_list))
-        print('lidar_len', len(lidar_list))
-        print('image_list', image_list[0].shape)
-        print('lidar_list', lidar_list[0].shape)
-        print('target_point', target_point.shape)
-        print('velocity', velocity.shape)
+        # print('image_len', len(image_list))
+        # print('lidar_len', len(lidar_list))
+        # print('image_list', image_list[0].shape)
+        # print('lidar_list', lidar_list[0].shape)
+        # print('target_point', target_point.shape)
+        # print('velocity', velocity.shape)
         # image_list = [normalize_imagenet(image_input) for image_input in image_list]
         fused_features = self.encoder(image_list, lidar_list, velocity)
         z = self.join(fused_features)

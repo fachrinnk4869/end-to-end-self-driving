@@ -9,23 +9,23 @@ class GlobalConfig:
 
     # 14_weathers_full_data clear_noon_full_data
     # , 'Town02', 'Town03', 'Town04', 'Town06', 'Town07', 'Town10']
-    # root_dir = '/media/fachri/banyak/endtoend/data/ADVERSARIAL/ClearNoon-fix'
-    root_dir = '/media/fachri/banyak/endtoend/data/ADVERSARIAL/COBA'
+    root_dir = '/media/fachri/banyak/endtoend/data/ADVERSARIAL/ClearNoon-fix'
+    # root_dir = '/media/fachri/banyak/endtoend/data/ADVERSARIAL/COBA'
     train_towns = [
-        # 'Town01', 'Town02', 'Town03', 'Town04',
-        # 'Town06', 'Town07',
+        'Town01', 'Town02', 'Town03', 'Town04',
+        'Town06', 'Town07',
         'Town10'
     ]
-    # val_towns = ['Town05']
-    val_towns = ['Town10']
+    val_towns = ['Town05']
+    # val_towns = ['Town10']
     train_data, val_data = [], []
     for town in train_towns:
-        # if not (town == 'Town07' or town == 'Town10'):
-        #     train_data.append(os.path.join(root_dir, town+'_long'))
-        # train_data.append(os.path.join(root_dir, town+'_short'))
+        if not (town == 'Town07' or town == 'Town10'):
+            train_data.append(os.path.join(root_dir, town+'_long'))
+        train_data.append(os.path.join(root_dir, town+'_short'))
         train_data.append(os.path.join(root_dir, town+'_tiny'))
     for town in val_towns:
-        # val_data.append(os.path.join(root_dir, town+'_short'))
+        val_data.append(os.path.join(root_dir, town+'_short'))
         val_data.append(os.path.join(root_dir, town+'_tiny'))
         # val_data.append(os.path.join(root_dir, town+'_x'))
 

@@ -43,7 +43,7 @@ class GlobalConfig:
 
     # buat prediksi expert, test
     test_data = []
-    test_weather = 'ClearNoon-fix'  # ClearNoon, ClearSunset, CloudyNoon, CloudySunset, WetNoon, WetSunset, MidRainyNoon, MidRainSunset, WetCloudyNoon, WetCloudySunset, HardRainNoon, HardRainSunset, SoftRainNoon, SoftRainSunset, Run1_ClearNoon, Run2_ClearNoon, Run3_ClearNoon
+    test_weather = 'ClearNoon-fix'  # ClearNoon
     test_scenario = 'ADVERSARIAL'  # NORMAL ADVERSARIAL
     expert_dir = '/media/fachri/banyak/endtoend/data/' + \
         test_scenario+'/'+test_weather  # 8T1W 8T14W

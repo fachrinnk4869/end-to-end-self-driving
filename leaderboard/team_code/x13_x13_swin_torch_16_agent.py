@@ -374,11 +374,20 @@ class x13Agent(autonomous_agent.AutonomousAgent):
         cwd = os.getcwd()
         # print(cwd+'/'+os.environ['SAVE_PATH']+'/'+self.sstring+'/segmentation/%06d.png' % frame)
         # cetak predicted segmentation
-        cv2.imwrite(cwd+'/'+os.environ['SAVE_PATH']+'/' +
-                    self.sstring+'/segmentation/%06d.png' % frame, imgx)
+        # cv2.imwrite(cwd+'/'+os.environ['SAVE_PATH']+'/' +
+        #             self.sstring+'/segmentation/%06d.png' % frame, imgx)
+        # print("save ke", cwd+'/'+os.environ['SAVE_PATH']+'/' +
+        #       self.sstring+'/semantic_cloud/%06d.png' % frame)
+        save_path_segmentation = pathlib.Path(self.save_path) / \
+            'segmentation' / f'{frame:06d}.png'
+        cv2.imwrite(str(save_path_segmentation), imgx)
         # cetak predicted segmentation
-        cv2.imwrite(cwd+'/'+os.environ['SAVE_PATH']+'/' +
-                    self.sstring+'/semantic_cloud/%06d.png' % frame, imgx2)
+        save_path_semantic_cloud = pathlib.Path(self.save_path) / \
+            'semantic_cloud' / f'{frame:06d}.png'
+        cv2.imwrite(save_path_semantic_cloud, imgx2)
+        # cetak predicted segmentation
+        # cv2.imwrite(cwd+'/'+os.environ['SAVE_PATH']+'/' +
+        #             self.sstring+'/semantic_cloud/%06d.png' % frame, imgx2)
 
     def destroy(self):
         del self.net
